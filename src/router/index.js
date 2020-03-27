@@ -2,6 +2,7 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import Login from "../components/Login.vue";
 import Home from "../components/Home.vue";
+import First from "../components/First.vue";
 
 Vue.use(VueRouter);
 
@@ -17,11 +18,24 @@ const routes = [
   {
     path: "/home",
     component: Home
+  },
+  {
+    path: "/first",
+    component: First
   }
+  
 ];
 
 const router = new VueRouter({
   routes
+//   proxyTable :{
+//   '/api/**':{
+//       target: 'http://localhost:3000',
+//       pathRewrite:{
+//           '^/api':'/'
+//       }
+//   },
+// },
 });
 
 router.beforeEach((to,from,next) =>{

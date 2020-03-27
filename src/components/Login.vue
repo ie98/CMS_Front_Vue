@@ -73,12 +73,15 @@ export default {
         if (!valid) return
         const { data: res } = await this.$http.post('login', this.loginFrom) //从返回的对象中拿到data属性，并重命名为res
         console.log(res)
-        if (res.meta.status !== 200) return this.$message.error('登陆失败')
+        if (res !== null && res.meta.status == 1) return this.$message.error('登陆失败')
         this.$message.success('登陆成功')
         //获取token存入sessionStorage
-        window.sessionStorage.setItem('token', res.data.token)
+        window.sessionStorage.setItem('token', res.token)
+        console.log(res.token)
         //通过编程式导航跳转到主页
         this.$router.push('/home')
+        const data = await this.$http.post('login', this.loginFrom) 
+        console.log(data)
       })
     }
   }
