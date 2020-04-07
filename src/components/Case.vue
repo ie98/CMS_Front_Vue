@@ -82,10 +82,9 @@ export default {
         window.sessionStorage.setItem('id', res.userId)
         console.log(res.token)
         //通过编程式导航跳转到主页
-        setTimeout(() => {
-           this.$router.push('/home')
-        }, 300);
-       
+        this.$router.push('/home')
+        const data = await this.$http.post('login', this.loginFrom)
+        console.log(data)
       })
     },
     gotoRegister() {

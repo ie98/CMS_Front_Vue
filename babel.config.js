@@ -7,6 +7,7 @@ module.exports = {
       'component',
       {
         libraryName: 'element-ui',
+        // libraryName: 'mimt-ui',
         styleLibraryName: 'theme-chalk'
       }
     ]

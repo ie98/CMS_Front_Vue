@@ -9,6 +9,9 @@ import  './assets/fonts/iconfont.css'
 //导入axios
 import axios from 'axios'
 
+// import MintUI from 'mint-ui'
+// import 'mint-ui/lib/style.css'
+
 //将axios挂在到vue的原型对象的$http属性上
 Vue.prototype.$http = axios
 //配置请求根路径
@@ -27,3 +30,5 @@ new Vue({
   router,
   render: h => h(App)
 }).$mount('#app')
+
+// Vue.use(MintUI)
