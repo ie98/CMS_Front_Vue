@@ -1,7 +1,8 @@
 module.exports = {
   devServer: {
     open: true,
-    port: '9000'
+    port: '9000',
+    disableHostCheck: true
     // host: 'localhost',
     // proxyTable: {
     //   '/ct': {

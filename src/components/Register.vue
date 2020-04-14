@@ -18,10 +18,10 @@
               placeholder="请输如用户名"
             ></el-input>
           </el-form-item>
-          <el-form-item prop="pass">
+          <el-form-item prop="password">
             <el-input
               type="password"
-              v-model="ruleForm2.pass"
+              v-model="ruleForm2.password"
               auto-complete="off"
               placeholder="输入密码"
             ></el-input>
@@ -33,6 +33,43 @@
               auto-complete="off"
               placeholder="确认密码"
             ></el-input>
+          </el-form-item>
+          <el-form-item > 
+          <el-select v-model="ruleForm2.college" placeholder="请选择">
+    <el-option
+      v-for="item in options"
+      :key="item.value"
+      :label="item.label"
+      :value="item.value">
+    </el-option>
+  </el-select>
+          </el-form-item>
+          <el-form-item prop="grade"> 
+            <el-select v-model="ruleForm2.grade" placeholder="请选择">
+    <el-option
+      :label="16"
+      :value="16">
+    </el-option>
+    <el-option
+      :label="17"
+      :value="17">
+    </el-option>
+    <el-option
+      :label="18"
+      :value="18">
+    </el-option>
+    <el-option
+      :label="19"
+      :value="19">
+    </el-option>
+    <el-option
+      :label="20"
+      :value="20">
+    </el-option>
+  </el-select>
+          </el-form-item>
+          <el-form-item prop="phone">
+            <el-input v-model="ruleForm2.phone" placeholder="请输入手机号"></el-input>
           </el-form-item>
           <el-form-item>
             <el-button
@@ -50,7 +87,7 @@
 </template>
 <script>
 export default {
-  name: 'Register',
+
   data() {
     // <!--验证密码-->
     let validatePass = (rule, value, callback) => {
@@ -67,7 +104,7 @@ export default {
     let validatePass2 = (rule, value, callback) => {
       if (value === '') {
         callback(new Error('请再次输入密码'))
-      } else if (value !== this.ruleForm2.pass) {
+      } else if (value !== this.ruleForm2.password) {
         callback(new Error('两次输入密码不一致!'))
       } else {
         callback()
@@ -76,8 +113,11 @@ export default {
     return {
       ruleForm2: {
         username: '',
-        pass: '',
-        checkPass: ''
+        password: '',
+        checkPass: '',
+        college:'',
+        grade:16,
+        phone:''
       },
       rules2: {
         pass: [{ validator: validatePass, trigger: 'change' }],
@@ -87,18 +127,32 @@ export default {
           { min: 4, max: 12, message: '长度在4到12个字符之间', trigger: 'blur' }
         ]
       },
-      flag: true
+      flag: true,
+       options: [{
+          value: '计算机',
+          label: '计算机'
+        }, {
+          value: '软件工程',
+          label: '软件工程'
+        }, {
+          value: '电气',
+          label: '电气'
+        }, {
+          value: '网络通信',
+          label: '网络通信'
+        }, {
+          value: '信息安全',
+          label: '信息安全'
+        }]
     }
   },
   methods: {
     // <!--提交注册-->
     submitForm(formName) {
-      this.$refs[formName].validate(async valid => {
+     if(this.checkPhone())  {
+ this.$refs[formName].validate(async valid => {
         if (valid) {
-          const { data: res } = await this.$http.post('/register', {
-            username: this.ruleForm2.username,
-            password: this.ruleForm2.pass
-          })
+          const { data: res } = await this.$http.post('/register', this.ruleForm2)
           console.log(res)
           if (res.status == '0') {
             setTimeout(() => {
@@ -116,6 +170,8 @@ export default {
           return false
         }
       })
+     }
+     
     },
     // <!--进入登录页-->
     gotoLogin() {
@@ -125,7 +181,15 @@ export default {
       })
       }, 300);
       
+    },
+     checkPhone(){ 
+    if(!(/^1[3456789]\d{9}$/.test(this.ruleForm2.phone))){ 
+        alert("手机号码有误，请重填");  
+        return false; 
+    } else{
+      return true
     }
+}
   }
 }
 </script>

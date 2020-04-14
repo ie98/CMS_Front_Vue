@@ -4,9 +4,9 @@
       <div id="register">
         <p class="title">登录</p>
         <el-form
-        ref="loginFromRef"
-      :model="loginFrom"
-      :rules="rules"     
+          ref="loginFromRef"
+          :model="loginFrom"
+          :rules="rules"
           status-icon
           label-width="0"
           class="demo-ruleForm"
@@ -14,7 +14,6 @@
           <el-form-item prop="username">
             <el-input
               v-model="loginFrom.username"
-            
               placeholder="请输如用户名"
             ></el-input>
           </el-form-item>
@@ -22,18 +21,14 @@
             <el-input
               type="password"
               v-model="loginFrom.password"
-            
               placeholder="输入密码"
             ></el-input>
           </el-form-item>
           <el-form-item>
-            <el-button
-              type="primary"
-              @click="loginVerify"
-              style="width:100%;"
-            >登录</el-button
+            <el-button type="primary" @click="loginVerify" style="width:100%;"
+              >登录</el-button
             >
-           <p class="register" @click="gotoRegister">没有账号？立即注册</p>
+            <p class="register" @click="gotoRegister">没有账号？立即注册</p>
           </el-form-item>
         </el-form>
       </div>
@@ -42,7 +37,7 @@
 </template>
 <script>
 export default {
-   data() {
+  data() {
     return {
       loginFrom: {
         username: 'lisi',
@@ -70,31 +65,46 @@ export default {
     loginVerify() {
       this.$refs.loginFromRef.validate(async valid => {
         console.log(valid)
+
         if (!valid) return
+
         const { data: res } = await this.$http.post('login', this.loginFrom) //从返回的对象中拿到data属性，并重命名为res
         console.log(res)
-        if (res !== null && res.meta.status == 1)
-          return this.$message.error('登陆失败')
+        if (res !== null && res.meta.status == 10008) {
+          this.$message.error(res.meta.message)
+          return
+        }
+
+        if (res.meta.status == 10007) {
+          this.$message.error(res.meta.message)
+          return
+        }
         this.$message.success('登陆成功')
-        console.log(res)
+
         //获取token存入sessionStorage
         window.sessionStorage.setItem('token', res.token)
         window.sessionStorage.setItem('id', res.userId)
+        console.log(res)
+        console.log(res.userId)
         console.log(res.token)
+        if (
+          window.sessionStorage.getItem('token') == null ||
+          window.sessionStorage.getItem('id') == null
+        )
+          alert('sessionStorage problem')
+        else alert('success')
         //通过编程式导航跳转到主页
         setTimeout(() => {
-           this.$router.push('/home')
-        }, 300);
-       
+          this.$router.push('/home')
+        }, 300)
       })
     },
     gotoRegister() {
       setTimeout(() => {
         this.$router.push({
-        path: '/register'
-      })
-      }, 300);
-      
+          path: '/register'
+        })
+      }, 300)
     }
   }
 }
