@@ -393,7 +393,7 @@ export default {
       this.$router.push('/login') //跳转到login界面
     },
     async toSitOne() {
-      this.$router.push('/home')
+      // this.$router.push('/home')
       this.show.sit = true
       this.show.food = false
       const { data: res } = await this.$http.get('/inLeft')
@@ -404,7 +404,7 @@ export default {
       console.log(this.tableArry)
     },
     async toSitTwo() {
-      this.$router.push('/home')
+      // this.$router.push('/home')
 
       this.show.sit = true
       this.show.food = false
@@ -415,7 +415,7 @@ export default {
       console.log(this.tableArry)
     },
     async recommendSit() {
-      this.$router.push('/home')
+      // this.$router.push('/home')
       console.log(this.form.peopleNumber)
       // this.dialogFormVisible = false
       if (this.form.peopleNumber > 12) {
@@ -432,6 +432,9 @@ export default {
         } else {
           this.tableArry = res.tables
           console.log(res)
+          // this.$router.push('/home')
+          this.show.sit = true
+          this.show.food = false
           this.showConfirm = true
           console.log('alert-success')
         }
@@ -455,6 +458,10 @@ export default {
         this.$message(res.message)
       } else {
         alert('选座成功，请在两分钟内就做!!')
+        if(this.form.region == 'diningtable_1')
+        this.toSitOne()
+        else
+        this.toSitTwo()
       }
     },
     handleOpen(key, keyPath) {

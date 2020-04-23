@@ -4,36 +4,55 @@
       <div id="register">
         <p class="title">登录</p>
         <el-form
-        ref="loginFromRef"
-      :model="loginFrom"
-      :rules="rules"     
+          ref="loginFromRef"
+          :model="loginFrom"
           status-icon
           label-width="0"
           class="demo-ruleForm"
         >
-          <el-form-item prop="username">
+          <el-form-item prop="out_trade_no">
             <el-input
-              v-model="loginFrom.username"
-            
-              placeholder="请输如用户名"
+              v-model="loginFrom.out_trade_no"
+              placeholder="请输如ID"
             ></el-input>
           </el-form-item>
-          <el-form-item prop="password">
+          <el-form-item prop="subject">
             <el-input
-              type="password"
-              v-model="loginFrom.password"
-            
-              placeholder="输入密码"
+             
+              v-model="loginFrom.subject"
+              placeholder="名称"
             ></el-input>
           </el-form-item>
+           <el-form-item prop="total_amount">
+            <el-input
+              v-model="loginFrom.total_amount"
+              placeholder="金额"
+            ></el-input>
+          </el-form-item>
+           <el-form-item prop="body">
+            <el-input
+              v-model="loginFrom.body"
+              placeholder="描述"
+            ></el-input>
+          </el-form-item>
+           <el-form-item prop="timeout_express">
+            <el-input       
+              v-model="loginFrom.timeout_express"
+              placeholder="等待时间"
+            ></el-input>
+          </el-form-item>
+           <el-form-item prop="product_code">
+            <el-input
+              v-model="loginFrom.product_code"
+              placeholder="商品码"
+            ></el-input>
+          </el-form-item>
+         
           <el-form-item>
-            <el-button
-              type="primary"
-              @click="loginVerify"
-              style="width:100%;"
-            >登录</el-button
+            <el-button type="primary" @click="submit" style="width:100%;"
+              >提交</el-button
             >
-           <p class="register" @click="gotoRegister">没有账号？立即注册</p>
+          
           </el-form-item>
         </el-form>
       </div>
@@ -42,58 +61,32 @@
 </template>
 <script>
 export default {
-   data() {
+  data() {
     return {
       loginFrom: {
-        username: 'lisi',
-        password: '741852aa'
-      },
-      // 表单验证，需要在 el-form-item 元素中增加 prop 属性
-      rules: {
-        username: [
-          { require: true, message: '必须填写用户名', trigger: 'blur' },
-          { min: 4, max: 12, message: '长度在4到12个字符之间', trigger: 'blur' }
-        ],
-        password: [
-          { require: true, message: '必须填写密码', trigger: 'blur' },
-          { min: 6, max: 15, message: '长度在6到15个字符之间', trigger: 'blur' }
-        ]
-      },
-      // 对话框显示和隐藏
-      dialogVisible: false
+        out_trade_no: '',
+        subject: '',
+        total_amount: '',
+        body: '',
+        timeout_express: '',
+        product_code: ''
+      }
     }
   },
   methods: {
-    resetLoginFrom() {
-      this.$refs.loginFromRef.resetFields()
-    },
-    loginVerify() {
-      this.$refs.loginFromRef.validate(async valid => {
-        console.log(valid)
-        if (!valid) return
-        const { data: res } = await this.$http.post('login', this.loginFrom) //从返回的对象中拿到data属性，并重命名为res
+    async submit(){
+        const { data: res } = await this.$http.post(`/pay`, this.loginFrom)
         console.log(res)
-        if (res !== null && res.meta.status == 1)
-          return this.$message.error('登陆失败')
-        this.$message.success('登陆成功')
-        console.log(res)
-        //获取token存入sessionStorage
-        window.sessionStorage.setItem('token', res.token)
-        window.sessionStorage.setItem('id', res.userId)
-        console.log(res.token)
-        //通过编程式导航跳转到主页
-        this.$router.push('/home')
-        const data = await this.$http.post('login', this.loginFrom)
-        console.log(data)
-      })
-    },
-    gotoRegister() {
-      setTimeout(() => {
-        this.$router.push({
-        path: '/register'
-      })
-      }, 300);
-      
+        let divForm = document.getElementsByTagName('divform')
+            if (divForm.length) {
+              document.body.removeChild(divForm[0])
+            }
+            const div = document.createElement('divform')
+            div.innerHTML = res // res.data就是sb支付宝返回给你的form
+            document.body.appendChild(div)
+            // document.forms[0].setAttribute('target', '_blank') // 加了_blank可能出问题所以我注释了
+            document.getElementsByName('punchout_form')[0].submit()
+            
     }
   }
 }
