@@ -15,11 +15,7 @@
             <el-radio-button :label="false">展开</el-radio-button>
             <el-radio-button :label="true">收起</el-radio-button>
           </el-radio-group> -->
-          <el-menu
-            class="el-menu-vertical-demo"
-            
-           
-          >
+          <el-menu class="el-menu-vertical-demo">
             <!-- 一级菜单 -->
             <el-submenu index="1">
               <!-- 设置图标及名称 -->
@@ -62,7 +58,7 @@
               </template>
               <el-menu-item-group>
                 <!-- 二级菜单 -->
-                <el-menu-item index="2-1" @click="toSelectFood">
+                <el-menu-item index="2-1" @click="toSelectShop">
                   <template slot="title">
                     <i class="el-icon-circle-plus"></i>
                     <span>选餐</span>
@@ -73,8 +69,7 @@
 
                   <span>系统推荐</span></el-menu-item
                 >
-                <el-menu-item index="2-3"
-                @click="toCart">
+                <el-menu-item index="2-3" @click="toCart">
                   <template slot="title">
                     <i class="el-icon-circle-plus"></i>
 
@@ -160,38 +155,85 @@
                 >确定</el-button
               >
             </div>
+            <div v-if="show.Shop">
+              <div v-for="items in allShop" :key="items.id">
+                <el-row>
+                  <div v-for="item in items" :key="item.id">
+                    <el-col :span="8">
+                      <!-- <router-link :to="'/product/' + info.id" class="product-main"  > -->
+                      <div class="product-main" style="height:200px">
+                        <el-row>
+                          <el-col :span="8">
+                            <img v-if="item.logo != ''"
+                              :src=" require('D:/vueProject/vue_proj_01/src/assets/imgs/' +
+                                  item.logo)"
+                              style="height: 100px; width: 100px  ;"
+                            />
+                            <img v-if="item.logo == ''"
+                              src=""
+                              style="height: 100px; width: 100px  ;"
+                            />
+                            <el-button
+                              type="primary"
+                              @click="showTheShopFood(item)"
+                            >
+                              进入店铺</el-button
+                            >
+                          </el-col>
+                          <el-col :span="16">
+                            <h2 style="margin-top:0">{{ item.shopname }}</h2>
+                            <div class="aline"></div>
+
+                            <span style="color:#5c4033 ;font-size:13px"
+                              ><span style="font-size:20px ; color:#D98719"
+                                >简介:</span
+                              >{{ item.described }}</span
+                            >
+
+                            <div class="product-cost">{{ item.sales }}</div>
+                          </el-col>
+                        </el-row>
+
+                        <!-- <div class="product-add-cart" @click.prevent="handleCart">加入购物车</div> -->
+                        <!-- </router-link> -->
+                      </div>
+                    </el-col>
+                  </div>
+                </el-row>
+              </div>
+            </div>
             <div v-if="show.food">
               <div>
-                <div v-for="items in allFood" :key="items.id">
+                <div v-for="temps in allFood" :key="temps.id">
                   <el-row>
-                    <div v-for="item in items" :key="item.id">
+                    <div v-for="temp in temps" :key="temp.id">
                       <el-col :span="4">
                         <!-- <router-link :to="'/product/' + info.id" class="product-main"  > -->
                         <div class="product-main">
-                          <h4>{{ item.shopname }}</h4>
+                          <h4>{{ temp.shopname }}</h4>
                           <img
                             :src="
                               require('D:/vueProject/vue_proj_01/src/assets/imgs/' +
-                                item.img)
+                                temp.img)
                             "
                             style="height: 100px; width: 80%;"
                           />
-                          <h4>{{ item.foodname }}</h4>
+                          <h4>{{ temp.foodname }}</h4>
 
                           <div>
                             <el-input-number
-                              v-model="item.num"
+                              v-model="temp.num"
                               :min="0"
                               :max="10"
                               size="small"
                               label="描述文字"
                             ></el-input-number>
                           </div>
-                          <div class="product-cost">¥ {{ item.price }}</div>
+                          <div class="product-cost">¥ {{ temp.price }}</div>
                           <el-button
                             type="primary"
                             size="mini"
-                            @click="addcart(item)"
+                            @click="addcart(temp)"
                             >加入购物车</el-button
                           >
                           <!-- <div class="product-add-cart" @click.prevent="handleCart">加入购物车</div> -->
@@ -249,7 +291,7 @@
       title="推荐食品"
       :visible.sync="showRecommendFoodForm"
       width="30%"
-        >
+    >
       <div class="product-main">
         <h4>{{ recommendFood.shopname }}</h4>
         <img
@@ -283,13 +325,16 @@
         <!-- <el-button type="primary" @click="recommendConfirm()">确 定</el-button> -->
       </span>
     </el-dialog>
-     <el-dialog :before-close="cancel" title="购物车" :visible.sync="outerVisible">
-      <el-dialog
+    <el-dialog
+      :before-close="cancelShowCart"
+      title="购物车"
+      :visible.sync="outerVisible"
+    >
+      <!-- <el-dialog
         width="30%"
         title="扫码支付"
         :visible.sync="innerVisible"
         append-to-body
-        
       >
         <div align="center">
           <img
@@ -297,49 +342,71 @@
             style="width:200px ; height:300px"
           />
         </div>
-      </el-dialog>
-      <el-table
-        height="300"
-        ref="multipleTable"
-        :data="cart"
-        tooltip-effect="dark"
-        style="width: 100% ;
+      </el-dialog> -->
+      <div style="margin-bottom:50px" v-for="item in cart" :key="item.id">
+        <el-card>
+          <span>{{ item.shopname }}</span>
+
+          <el-table
+            height="300"
+            ref="multipleTable"
+            :data="item.ShopFood"
+            tooltip-effect="dark"
+            style="width: 100% ;
     font-size:10px"
-        @selection-change="handleSelectionChange"
-      >
-        <el-table-column type="selection" width="55"> </el-table-column>
-        <el-table-column prop="foodname" label="食品名" width="120">
-        </el-table-column>
-        <el-table-column label="添加日期" width="120">
-          <template slot-scope="scope">{{ scope.row.date }}</template>
-        </el-table-column>
-        <el-table-column prop="num" label="数量" show-overflow-tooltip>
-        </el-table-column>
-        <el-table-column prop="allcost" label="总价(元)" show-overflow-tooltip>
-        </el-table-column>
-        <el-table-column prop="shopname" label="店铺名" show-overflow-tooltip>
-        </el-table-column>
-        <el-table-column label="操作" width="180">
-          <template slot-scope="scope">
-            <el-button size="mini" @click="handleEdit(scope.$index, scope.row)"
+            @selection-change="handleSelectionChange($event , item.id)"
+          >
+            <el-table-column type="selection" width="55"> </el-table-column>
+            <el-table-column prop="foodname" label="食品名" width="100">
+            </el-table-column>
+            <el-table-column label="添加日期" width="120">
+              <template slot-scope="scope">{{ scope.row.ChinaDate }}</template>
+            </el-table-column>
+            <el-table-column
+              prop="num"
+              label="数量"
+              width="50"
+              show-overflow-tooltip
+            >
+            </el-table-column>
+            <el-table-column
+              prop="allcost"
+              label="总价(元)"
+              width="80"
+              show-overflow-tooltip
+            >
+            </el-table-column>
+            <el-table-column
+              prop="shopname"
+              label="店铺名"
+              width="120"
+              show-overflow-tooltip
+            >
+            </el-table-column>
+            <el-table-column label="操作" width="100">
+              <template slot-scope="scope">
+                <!-- <el-button size="mini" @click="handleEdit(scope.$index, scope.row)"
               >编辑</el-button
-            >
-            <el-button
-              size="mini"
-              type="danger"
-              @click="handleDelete(scope.$index, scope.row)"
-              >删除</el-button
-            >
-          </template>
-        </el-table-column>
-      </el-table>
-      <div style="margin-top: 20px">
-        <el-button @click="toggleSelection()">取消选择</el-button>
+            > -->
+                <el-button
+                  size="mini"
+                  type="danger"
+                  @click="handleDelete(scope.row)"
+                  >删除</el-button
+                >
+              </template>
+            </el-table-column>
+          </el-table>
+          <div class="product-cost">总价：{{ allCost[item.id].num }}元</div>
+          <el-button type="primary" @click="commitRecord(item.id,item.shopname)">下单</el-button>
+        </el-card>
       </div>
+      <!-- <div style="margin-top: 20px">
+        <el-button @click="toggleSelection()">取消选择</el-button>
+      </div> -->
       <div slot="footer" class="dialog-footer">
-        <div class="product-cost">总价：{{ this.allCost }}元</div>
-        <el-button @click="cancel ">取 消</el-button>
-        <el-button type="primary" @click="innerVisible = true">下单</el-button>
+        <el-button @click="cancelShowCart">取 消</el-button>
+        <!-- <el-button type="primary" @click="innerVisible = true">下单</el-button> -->
       </div>
     </el-dialog>
   </div>
@@ -348,8 +415,10 @@
 export default {
   data() {
     return {
+      showShop: false,
       show: {
         sit: false,
+        Shop: false,
         food: false,
         cart: false
       },
@@ -366,25 +435,39 @@ export default {
         allPeopleName: []
       },
       showConfirm: false,
-      info: {
-        image: 'asd.jpg',
-        id: 1,
-        name: '西瓜',
-        color: '#dac272',
-        cost: 15.5,
-        num: 0
-      },
+      //=======================Food And Shop
+      allShop: [],
       allFood: [],
       recommendFood: {},
       showRecommendFoodForm: false,
       tableData: [],
       //-------------------cart------------------
-      allCost: 0,
+      //allCost:[{num}]  //存放cart中对应id的总价
+      allCost: [],
       multipleSelection: [],
+      //cart格式   
+      // cart:[
+      //   {   //一个店铺 一个对象
+      //     ShopFood:[],  //该店铺在购物车中的food
+      //     shopname:'',  
+      //     id:0,  // v-for渲染时，为了获取总价allCost而设置的id
+      //   }
+      // ]
       cart: [],
       outerVisible: false,
       innerVisible: false,
-
+      //订单信息
+      recordInfo:{
+          out_trade_no:'', // 订单ID 店铺ID + 食品ID
+          subject:'',//对象  店铺名
+          total_amount:'',//金额
+          body:'',//描述 食品名之和
+          timeout_express:'5m',//超订单过期时间 5分钟，
+          product_code:'' ,//商品码 食品Id
+          username:window.sessionStorage.getItem('username'),
+          userid:window.sessionStorage.getItem('id'),
+          dates:[]
+      }
     }
   },
   methods: {
@@ -397,7 +480,7 @@ export default {
       this.show.sit = true
       this.show.food = false
       const { data: res } = await this.$http.get('/inLeft')
-      this.info.image = require('D:/vueProject/vue_proj_01/src/assets/imgs/asd.jpg')
+      // this.info.image = require('D:/vueProject/vue_proj_01/src/assets/imgs/asd.jpg')
       this.tableArry = res
       this.showConfirm = false
       console.log('One')
@@ -458,10 +541,8 @@ export default {
         this.$message(res.message)
       } else {
         alert('选座成功，请在两分钟内就做!!')
-        if(this.form.region == 'diningtable_1')
-        this.toSitOne()
-        else
-        this.toSitTwo()
+        if (this.form.region == 'diningtable_1') this.toSitOne()
+        else this.toSitTwo()
       }
     },
     handleOpen(key, keyPath) {
@@ -502,23 +583,51 @@ export default {
         this.form.allPeopleName.push(temp)
       }
     },
-   
+
     handleChange() {},
 
-  
-
-
-   
     //-------------------------------------Food--------------------
-    async toSelectFood() {
-      this.show.sit = false
-      this.show.food = true
-      this.allFood = []
-      const { data: res } = await this.$http.get('selectAllFood', {})
+    async toSelectShop() {
+      this.allShop = []
+      const { data: res } = await this.$http.get(`/getAllShop`, {
+        params: {}
+      })
       var temp = []
       for (let index = 0; index < res.length; index++) {
-        res[index].num = 0
         temp.push(res[index])
+        if (res[index].logo == null){
+          res[index].logo = ''
+        }
+        if ((index + 1) % 3 == 0) {
+          this.allShop.push(temp)
+          temp = []
+        }
+      }
+      this.allShop.push(temp)
+      console.log(res)
+      // this.show.shop = true
+      console.log(this.allShop)
+      this.show.food = false
+      this.show.sit = false
+      this.show.Shop = true
+    },
+    async showTheShopFood(val) {
+      this.allFood = []
+      const { data: res } = await this.$http.get('showTheShopFood', {
+        params: { shopname: val.shopname }
+      })
+      console.log(res)
+      if (res.meta.status == 1) {
+        this.show.sit = false
+        this.show.Shop = true
+        this.show.food = false
+        return this.$message.error('error!!!')
+      }
+
+      var temp = []
+      for (let index = 0; index < res.foods.length; index++) {
+        res.foods[index].num = 0
+        temp.push(res.foods[index])
         if ((index + 1) % 6 == 0) {
           this.allFood.push(temp)
           temp = []
@@ -528,6 +637,9 @@ export default {
       temp = []
       console.log(this.allFood)
       this.$emit('allFood', this.allFood)
+      this.show.sit = false
+      this.show.Shop = false
+      this.show.food = true
     },
     //----------------------------------RecommendFood--------------------------
     async showRecommendFood() {
@@ -558,13 +670,13 @@ export default {
     },
     cancelAddCar() {
       this.showRecommendFoodForm = false
-      this.toSelectFood()
+      // this.toSelectFood()
       this.show.sit = false
       this.show.food = true
     },
     recommendFoodHandleClose(done) {
       this.showRecommendFoodForm = false
-      this.toSelectFood()
+      // this.toSelectFood()
       this.show.sit = false
       this.show.food = true
     },
@@ -577,32 +689,66 @@ export default {
         cart: item,
         id: window.sessionStorage.getItem('id')
       })
+      console.log(item)
       this.showRecommendFoodForm = false
-      this.toSelectFood()
+      this.recommendFood = {}
+      // this.toSelectFood()
       this.show.sit = false
       this.show.food = true
+      this.$message.success('添加成功！！')
     },
     //--------------------------------------Cart---------------------
-        async toCart(){
-        this.outerVisible = true
-        const { data: res } = await this.$http.post('getCart', {id:window.sessionStorage.getItem('id')})
-        
-        for (let index = 0; index < res.cart.length; index++) {
-            res.cart[index].allcost = (res.cart[index].price * res.cart[index].num)
-            res.cart[index].date = this.timestampToTime (res.cart[index].date) 
+    async toCart() {
+      this.cart = []
+      this.outerVisible = true
+      const { data: res } = await this.$http.post('getCart', {
+        id: window.sessionStorage.getItem('id')
+      })
+      let shops = []
+      let object = {}
+      let sn = { name: '' }
+      var id = 0
+      for (let index = 0; index < res.cart.length; index++) {   // 遍历所所有值
+        res.cart[index].allcost = res.cart[index].price * res.cart[index].num
+        let date = res.cart[index].date
+        res.cart[index].ChinaDate = this.timestampToTime(date)
+        let index2 = 0
+        for (index2 = 0; index2 < this.cart.length; index2++) {  //寻找食品对应的店铺
+          if (res.cart[index].shopname == this.cart[index2].shopname) {
+            this.cart[index2].ShopFood.push(res.cart[index])
+            break
+          }
         }
-        this.cart = res.cart
-        console.log(res)
-      },
-           timestampToTime (cjsj) {
-        var date = new Date(cjsj) //时间戳为10位需*1000，时间戳为13位的话不需乘1000
-        var Y = date.getFullYear() + '-'
-        var M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-'
-        var D = date.getDate() + ' '
-        var h = date.getHours() + ':'
-        var m = date.getMinutes() + ':'
-        var s = date.getSeconds()
-        return Y+M+D+h+m+s
+        if (index2 == this.cart.length) {  //没有找到店铺则新建一个店铺对象object ，放入cart中
+          shops.push(res.cart[index])
+          object.ShopFood = shops
+          object.shopname = res.cart[index].shopname
+          object.id = id
+          this.cart.push(object)
+          let temp = { num: 0 }
+          this.allCost.push(temp)
+          let selectFood = []
+          this.multipleSelection.push(selectFood)
+          id = id + 1
+          shops = []
+          object = {}
+        }
+      }
+
+      console.log(this.cart)
+    },
+    timestampToTime(cjsj) {
+      var date = new Date(cjsj) //时间戳为10位需*1000，时间戳为13位的话不需乘1000
+      var Y = date.getFullYear() + '-'
+      var M =
+        (date.getMonth() + 1 < 10
+          ? '0' + (date.getMonth() + 1)
+          : date.getMonth() + 1) + '-'
+      var D = date.getDate() + ' '
+      var h = date.getHours() + ':'
+      var m = date.getMinutes() + ':'
+      var s = date.getSeconds()
+      return Y + M + D + h + m + s
     },
     toggleSelection(rows) {
       if (rows) {
@@ -613,27 +759,90 @@ export default {
         this.$refs.multipleTable.clearSelection()
       }
     },
-    handleSelectionChange(val) {
-      this.multipleSelection = val
-      this.allCost = 0
-      for (let index = 0; index < val.length; index++) {
-        this.allCost += val[index].allcost
+    // handleSelectionChange(val) {
+    //   this.allCost[val.id].num = 0
+    //   console.log(val)
+    //   this.multipleSelection = val.ShopFood
+    //   // let temp = {num : 0}
+    //   // console.log(val.id)
+    //   // this.allCost[val.id].push(temp)
+    //   for (let index = 0; index < val.ShopFood.length; index++) {
+    //     this.allCost[val.id].num += val.ShopFood[index].allcost
+    //   }
+    // },
+    handleSelectionChange( selection , id) {
+      console.log(selection)
+      this.allCost[id].num = 0
+      console.log(selection)
+      this.multipleSelection[id] = selection
+      console.log("multipleSelection")
+      console.log(id)
+      console.log(this.multipleSelection[id])
+      // let temp = {num : 0}
+      // console.log(val.id)
+      // this.allCost[val.id].push(temp)
+      for (let index = 0; index < selection.length; index++) {
+        this.allCost[id].num += selection[index].allcost
       }
     },
     handleEdit(index, row) {
       console.log(index, row)
     },
-    handleDelete(index, row) {
-      console.log('11111111')
-      console.log(index, row)
-      console.log('22222222')
+    async handleDelete(row) {
+      console.log(row)
+      const { data: res } = await this.$http.delete(`/deleteCartItem/${window.sessionStorage.getItem('id')}`, row)
+      console.log(row)
+      this.toCart()
+      
     },
-    cancel(){
+    cancelShowCart() {
+      this.cart = []
       this.outerVisible = false
-       this.toSelectFood()
+      // this.toSelectFood()
       this.show.sit = false
       this.show.food = true
-   
+    },
+    //提交订单
+    async commitRecord( id ,shopname){
+      if(this.multipleSelection[id].length == 0 )
+      return this.$message.error("请选择商品")
+      console.log(this.multipleSelection[id])  
+      this.multipleSelection[id].forEach((item , i) => {
+        this.recordInfo.out_trade_no += item.id
+        this.recordInfo.body += item.foodname
+        console.log("item.date")
+        console.log(item.date)
+        console.log("item.ChinaDate")
+        console.log(item.ChinaDate)
+        this.recordInfo.dates.push(item.date)
+        
+        if(i != this.multipleSelection[id].length-1)
+        this.recordInfo.body += ','
+        
+      });
+      console.log(this.recordInfo.dates)
+       this.recordInfo.subject = shopname
+      this.recordInfo.total_amount = this.allCost[id].num
+      this.recordInfo.product_code = this.recordInfo.out_trade_no
+      if(this.allCost[id].num == 0){
+        this.$message.error("金额不能为0！！！")
+      }
+      console.log( this.recordInfo)
+         const { data: res } = await this.$http.post(`/pay`, this.recordInfo)
+        console.log(res)
+         this.cart = []
+         this.outerVisible = false
+        let divForm = document.getElementsByTagName('divform')
+            if (divForm.length) {
+              document.body.removeChild(divForm[0])
+            }
+            const div = document.createElement('divform')
+            div.innerHTML = res 
+            document.body.appendChild(div)
+            // document.forms[0].setAttribute('target', '_blank') // 加了_blank可能出问题所以我注释了
+            document.getElementsByName('punchout_form')[0].submit()  // 提交name为punchout_form的dom
+        
+       
     }
   }
 }
@@ -687,15 +896,15 @@ export default {
   display: block;
   margin: 16px;
   padding: 16px;
-  border: 1px solid #dddee1;
+  border: 4px solid #d98719;
   border-radius: 6px;
+
   overflow: hidden;
-  background: #aedd81;
+  background: #eaedf1;
   text-align: center;
   position: relative;
 }
 .product-main img {
-  width: 100%;
 }
 h4 {
   color: #222;
@@ -733,5 +942,22 @@ h4 {
 }
 .product-main:hover .product-add-cart {
   display: inline-block;
+}
+.el-card {
+  /* //提高优先级 */
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.15) !important;
+  margin-bottom: 20px !important;
+}
+.el-row {
+  margin-top: 20px !important;
+}
+.col1 {
+  font-size: 15px;
+  color: #5c3317;
+  word-break: break-all;
+}
+.aline {
+  background-color: #e6e3e3;
+  height: 1px;
 }
 </style>

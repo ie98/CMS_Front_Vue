@@ -84,6 +84,7 @@ export default {
         //获取token存入sessionStorage
         window.sessionStorage.setItem('token', res.token)
         window.sessionStorage.setItem('id', res.userId)
+        window.sessionStorage.setItem('username', res.username)
         console.log(res)
         console.log(res.userId)
         console.log(res.token)

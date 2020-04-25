@@ -20,7 +20,7 @@
             v-model="form.peopleNumber"
             @change="peopleNumberBlur"
             :min="1"
-            :max="10"
+            :max="50"
           ></el-input-number>
           <!-- <el-input v-model="form.peopleNumber" @blur="peopleNumberBlur" autocomplete="off"></el-input> -->
         </el-form-item>
@@ -82,7 +82,7 @@ export default {
       console.log(this.form.peopleNumber)
       // this.dialogFormVisible = false
 
-      if (this.form.peopleNumber > 12) {
+      if (this.form.peopleNumber > 50) {
         this.$message('人数上限为12')
         return
       } else {
@@ -112,7 +112,7 @@ export default {
       }
     },
     async selectConfirm() {
-      this.showConfirm = false
+      this.showConfirm = false 
       console.log(window.sessionStorage.getItem('id'))
       const { data: res } = await this.$http.post('/selectConfirm', {
         tables: this.tableArry,
@@ -127,7 +127,7 @@ export default {
       if (res.status == '50001') {
         this.$message(res.message)
       } else {
-        alert('选座成功，请在两分钟内就做!!')
+        this.$message.success("选座成功，请在两分钟内就座！！！")
       }
     },
     peopleNumberBlur() {

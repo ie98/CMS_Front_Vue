@@ -5,7 +5,6 @@ import Home from '../components/Home.vue'
 import Home1 from '../components/Home1.vue'
 import First from '../components/First.vue'
 import Register from '../components/Register.vue'
-import Case from '../components/Case.vue'
 import Left from '../components/Location/Left.vue'
 import Right from '../components/Location/Right.vue'
 import RecommendSit from '../components/Location/RecommendSit.vue'
@@ -60,10 +59,6 @@ const routes = [
   {
     path: '/register',
     component: Register
-  },
-  {
-    path: '/case',
-    component: Case
   }
 ]
 
